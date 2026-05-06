@@ -48,13 +48,10 @@ async function connectDB() {
   console.log("✅ MongoDB Connected");
   return cached.conn;
 }
-
-
 connectDB();
-
-
 app.use("/user", userRoute);
 app.use("/blogs", blogRoute);
+
 
 app.get("/", (req, res) => {
   res.send("Server is Running 🚀");

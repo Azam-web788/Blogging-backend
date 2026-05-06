@@ -20,7 +20,6 @@ const create = async (req , res) => {
             description,
             userid : user._id
         })
-        blog.save()
         res.status(200).json({
             message : "blog created successfully",
             blog,
@@ -29,7 +28,7 @@ const create = async (req , res) => {
     } catch (err) {
         res.status(500).json({
             message : err.message,
-            succesws : false
+            success : false
         })        
     }
 }
@@ -45,7 +44,7 @@ const editBlog = async function (req , res) {
                 success : false
             })
         }
-        if (blog.userid !== userId) {
+        if (blog.userid.toString() !== userId) {
             return res.status(404).json({
                 message : "user blog no found",
                 success : false
@@ -80,7 +79,7 @@ const deleteBlog = async function (req , res) {
                 success : false
             })
         }
-        if (blog.userid !== userId) {
+        if (blog.userid.toString() !== userId) {
             return res.status(404).json({
                 message : "user blog no found",
                 success : false
