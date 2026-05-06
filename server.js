@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ["http://localhost:5173" , "https://blogging-app-f18.vercel.app"],
+  origin: ["http://localhost:5173", "https://blogging-app-f18.vercel.app"],
   credentials: true
 }));
 
@@ -25,34 +25,34 @@ if (!MONGO_URL) {
   throw new Error("MONGO_URL is missing in .env file");
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = {
-    conn: null,
-    promise: null
-  };
-}
 
 async function connectDB() {
-  if (cached.conn) {
-    console.log("⚡ Using cached MongoDB connection");
-    return cached.conn;
+  try {
+    if (mongoose.connection.readyState === 1) {
+      return; 
+    }
+    await mongoose.connect(MONGO_URL, {
+      serverSelectionTimeoutMS: 10000,
+    });
+    console.log("✅ MongoDB Connected");
+  } catch (error) {
+    console.error("❌ MongoDB Error:", error.message);
+    throw error;
   }
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGO_URL).then((m) => m);
-  }
-
-  cached.conn = await cached.promise;
-
-  console.log("✅ MongoDB Connected");
-  return cached.conn;
 }
-connectDB();
+
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+});
+
 app.use("/user", userRoute);
 app.use("/blogs", blogRoute);
-
 
 app.get("/", (req, res) => {
   res.send("Server is Running 🚀");
