@@ -161,7 +161,6 @@ const Login = async (req, res) => {
   }
 };
 
-// ================= LOGOUT =================
 const Logout = async (req, res) => {
   res.clearCookie("token").status(200).json({
     message: "User logout successfully",
@@ -169,7 +168,6 @@ const Logout = async (req, res) => {
   });
 };
 
-// ================= SINGLE USER =================
 const SingleUser = async (req, res) => {
   const id = req.params.id;
 
@@ -200,7 +198,6 @@ const SingleUser = async (req, res) => {
   }
 };
 
-// ================= EDIT USER =================
 const EditUser = async (req, res) => {
   const id = req.params.id;
 
@@ -246,7 +243,6 @@ const EditUser = async (req, res) => {
   }
 };
 
-// ================= GET ALL USERS =================
 const GetallUsers = async (req, res) => {
   try {
     const allUsers = await User.find();
