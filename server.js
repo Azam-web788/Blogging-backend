@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: "*"
+  origin: ["http://localhost:5173" , "https://blogging-app-f18.vercel.app"],
+  credentials: true
 }));
 
 const MONGO_URL = process.env.MONGO_URL;
