@@ -18,7 +18,7 @@ const Register = async (req, res) => {
     linkedinUrl,
     image,
     about,
-    role
+    role,
   } = req.body;
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -36,21 +36,21 @@ const Register = async (req, res) => {
     ) {
       return res.status(400).json({
         message: "All fields are required",
-        success: false
+        success: false,
       });
     }
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         message: "Invalid email",
-        success: false
+        success: false,
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         message: "Password must be at least 6 characters",
-        success: false
+        success: false,
       });
     }
 
@@ -59,7 +59,7 @@ const Register = async (req, res) => {
     if (existingEmail) {
       return res.status(409).json({
         message: "User already exists",
-        success: false
+        success: false,
       });
     }
 
@@ -75,7 +75,7 @@ const Register = async (req, res) => {
       about,
       role,
       instagramUrl,
-      linkedinUrl
+      linkedinUrl,
     });
 
     await user.save();
@@ -83,14 +83,13 @@ const Register = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       user,
-      success: true
+      success: true,
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: err.message,
-      success: false
+      success: false,
     });
   }
 };
@@ -103,7 +102,7 @@ const Login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "All fields are required",
-        success: false
+        success: false,
       });
     }
 
@@ -112,7 +111,7 @@ const Login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         message: "Incorrect email or password",
-        success: false
+        success: false,
       });
     }
 
@@ -121,7 +120,7 @@ const Login = async (req, res) => {
     if (!isPassword) {
       return res.status(401).json({
         message: "Incorrect email or password",
-        success: false
+        success: false,
       });
     }
 
@@ -130,10 +129,10 @@ const Login = async (req, res) => {
         id: user._id,
         email: user.email,
         firstname: user.firstname,
-        image: user.image
+        image: user.image,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     const { password: _, ...safeUser } = user._doc;
@@ -141,22 +140,21 @@ const Login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
       message: "User login successfully",
       user: safeUser,
       token,
-      success: true
+      success: true,
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: err.message,
-      success: false
+      success: false,
     });
   }
 };
@@ -164,7 +162,7 @@ const Login = async (req, res) => {
 const Logout = async (req, res) => {
   res.clearCookie("token").status(200).json({
     message: "User logout successfully",
-    success: true
+    success: true,
   });
 };
 
@@ -177,7 +175,7 @@ const SingleUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         message: "User not found",
-        success: false
+        success: false,
       });
     }
 
@@ -186,14 +184,13 @@ const SingleUser = async (req, res) => {
     res.status(200).json({
       message: "Single user fetched",
       user,
-      blog
+      blog,
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: err.message,
-      success: false
+      success: false,
     });
   }
 };
@@ -209,7 +206,7 @@ const EditUser = async (req, res) => {
     instagramUrl,
     linkedinUrl,
     image,
-    role
+    role,
   } = req.body;
 
   try {
@@ -223,22 +220,21 @@ const EditUser = async (req, res) => {
         instagramUrl,
         linkedinUrl,
         image,
-        role
+        role,
       },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json({
       message: "User updated successfully",
       user,
-      success: true
+      success: true,
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: err.message,
-      success: false
+      success: false,
     });
   }
 };
@@ -249,23 +245,16 @@ const GetallUsers = async (req, res) => {
 
     res.status(200).json({
       message: "All users fetched",
-      allUsers
+      allUsers,
+      success: true,
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: err.message,
-      success: false
+      success: false,
     });
   }
 };
 
-export {
-  Register,
-  Login,
-  Logout,
-  SingleUser,
-  EditUser,
-  GetallUsers
-};
+export { Register, Login, Logout, SingleUser, EditUser, GetallUsers };
